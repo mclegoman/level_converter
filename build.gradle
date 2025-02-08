@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = project.group
@@ -14,7 +15,7 @@ repositories {
 
 dependencies {
     implementation "com.formdev:flatlaf:${project.flatlaf}"
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+    implementation "com.fasterxml.jackson.core:jackson-databind:${project.jackson}"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -26,28 +27,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-jar {
-    manifest {
-        attributes["Implementation-Title"] = archivesBaseName
-        attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = project.main
-    }
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
-tasks.register('compileFatJar', Jar) {
-    manifest {
-        attributes["Implementation-Title"] = archivesBaseName
-        attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = project.main
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
-
 processResources {
     inputs.properties 'version': project.version
 
@@ -55,3 +34,23 @@ processResources {
         expand 'version': project.version
     }
 }
+
+
+jar {
+    manifest {
+        attributes["Implementation-Title"] = archivesBaseName
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = mainClassName
+    }
+}
+shadowJar {
+    manifest {
+        attributes(
+                'Implementation-Title': archivesBaseName,
+                'Implementation-Version': version,
+                'Main-Class': mainClassName
+        )
+    }
+    mergeServiceFiles()
+}
+build.dependsOn shadowJar
