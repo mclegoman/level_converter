@@ -1,0 +1,12 @@
+{
+	"id": "level_converter",
+	"name": "Level Converter",
+	"version": "${version}",
+	"author": "dannytaylor",
+	"licence": {
+		"id": "LGPL-3.0-or-later",
+		"url": "https://github.com/mclegoman/level_converter/blob/readme/licence"
+	},
+	"year": "2025",
+	"source": "https://github.com/mclegoman/level_converter"
+}

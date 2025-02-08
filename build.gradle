@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation "com.formdev:flatlaf:${project.flatlaf}"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -45,4 +46,12 @@ tasks.register('compileFatJar', Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
+}
+
+processResources {
+    inputs.properties 'version': project.version
+
+    filesMatching('version.json') {
+        expand 'version': project.version
+    }
 }

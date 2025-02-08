@@ -1,3 +1,10 @@
+/*
+    Level Converter
+    Contributor(s): dannytaylor
+    Github: https://github.com/mclegoman/level_converter
+    Licence: GNU LGPLv3
+*/
+
 package com.mclegoman.level_converter.screen;
 
 import com.mclegoman.level_converter.Main;
@@ -49,6 +56,9 @@ public abstract class Tab {
 	}
 	protected static Component addSpacer() {
 		return addSpacer(8, 0);
+	}
+	protected static void addEmptyRow(JPanel tab, GridBagConstraints grid, int amount) {
+		for (int i = 0; i < amount; i++) addRow(tab, grid, null, new JLabel(" "));
 	}
 	protected static void addVersioning(Container parent, GridBagConstraints grid) {
 		addRow(parent, grid, null, new JLabel(Main.data.getName() + " " + Main.data.getVersion() + " (c) " + Main.data.getYear() + " " + Main.data.getAuthor() + ". " + Main.data.getLicence().getId()));

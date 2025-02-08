@@ -1,7 +1,7 @@
 /*
-    Save
+    Level Converter
     Contributor(s): dannytaylor
-    Github: https://github.com/MCLegoMan/mclm_save
+    Github: https://github.com/mclegoman/level_converter
     Licence: GNU LGPLv3
 */
 

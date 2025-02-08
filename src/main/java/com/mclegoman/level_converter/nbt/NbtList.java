@@ -1,7 +1,7 @@
 /*
-    Save
+    Level Converter
     Contributor(s): dannytaylor
-    Github: https://github.com/MCLegoMan/mclm_save
+    Github: https://github.com/mclegoman/level_converter
     Licence: GNU LGPLv3
 */
 
@@ -14,39 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NbtList extends NbtElement {
-	private List elements = new ArrayList();
+	private List<NbtElement> elements = new ArrayList<>();
 	private byte type;
 
 	public NbtList() {
 	}
 
 	final void write(DataOutput dataOutput) throws IOException {
-		if (this.elements.size() > 0) {
-			this.type = ((NbtElement)this.elements.get(0)).getType();
-		} else {
-			this.type = 1;
-		}
-
+		if (!this.elements.isEmpty()) this.type = this.elements.get(0).getType();
+		else this.type = 1;
 		dataOutput.writeByte(this.type);
 		dataOutput.writeInt(this.elements.size());
-
-		for(int var2 = 0; var2 < this.elements.size(); ++var2) {
-			((NbtElement)this.elements.get(var2)).write(dataOutput);
-		}
-
+		for (NbtElement element : this.elements) element.write(dataOutput);
 	}
 
 	final void read(DataInput dataInput) throws IOException {
 		this.type = dataInput.readByte();
 		int var2 = dataInput.readInt();
-		this.elements = new ArrayList();
-
-		for(int var3 = 0; var3 < var2; ++var3) {
+		this.elements = new ArrayList<>();
+		for (int var3 = 0; var3 < var2; ++var3) {
 			NbtElement var4;
 			(var4 = NbtElement.create(this.type)).read(dataInput);
 			this.elements.add(var4);
 		}
-
 	}
 
 	public final byte getType() {
@@ -54,7 +44,7 @@ public class NbtList extends NbtElement {
 	}
 
 	public final String toString() {
-		StringBuilder var10000 = (new StringBuilder()).append("").append(this.elements.size()).append(" entries of type ");
+		StringBuilder var10000 = (new StringBuilder()).append(this.elements.size()).append(" entries of type ");
 		String var10001;
 		switch (this.type) {
 			case 0:
@@ -103,7 +93,7 @@ public class NbtList extends NbtElement {
 	}
 
 	public final NbtElement get(int i) {
-		return (NbtElement)this.elements.get(i);
+		return this.elements.get(i);
 	}
 
 	public final void replace(int i, NbtElement element) {
