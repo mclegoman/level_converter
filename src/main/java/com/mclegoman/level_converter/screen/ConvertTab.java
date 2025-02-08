@@ -22,6 +22,7 @@ public class ConvertTab extends Tab {
 	public JComboBox<Formats> outputFormats;
 	public JTextField inputFile;
 	public JTextField outputDir;
+	public JButton advanced;
 	public JCheckBox convertPlayerData;
 	public String getName() {
 		return "Convert";
@@ -47,26 +48,13 @@ public class ConvertTab extends Tab {
 			selectOutputDirectory(() -> "", (s) -> outputDir.setText(s));
 		});
 		inputFormats.addActionListener(e -> updateOutputFormats());
-		JButton advanced = new JButton("Advanced...");
+		advanced = new JButton("Advanced...");
 		advanced.addActionListener(e -> {
 			advanced.setEnabled(false);
 		});
 		addRow(tab, grid, null, advanced);
 		addRow(tab, grid, null, new JLabel("Convert Player Data:"), convertPlayerData = new JCheckBox((Icon)null, true));
-		JButton convert = new JButton("Convert!");
-		convert.addActionListener(e -> {
-			if (!inputFile.getText().isEmpty() && !outputDir.getText().isEmpty()) {
-				inputFormats.setEnabled(false);
-				outputFormats.setEnabled(false);
-				inputFile.setEnabled(false);
-				outputDir.setEnabled(false);
-				advanced.setEnabled(false);
-				convertPlayerData.setEnabled(false);
-				convert.setEnabled(false);
-				// TODO: Start converting
-			}
-		});
-		addRow(tab, grid, null, convert);
+		addRow(tab, grid, null, getConvert());
 	}
 	public static void selectInputFile(Supplier<String> dir, Consumer<String> onAccept) {
 		JFileChooser chooser = new JFileChooser();
@@ -98,5 +86,29 @@ public class ConvertTab extends Tab {
 		} else if (selectedInputFormat == Formats.indev) {
 			outputFormats.addItem(Formats.infdev);
 		}
+	}
+	private JButton getConvert() {
+		JButton convert = new JButton("Convert!");
+		convert.addActionListener(e -> {
+			if (!inputFile.getText().isEmpty() && !outputDir.getText().isEmpty()) {
+				// TODO: Check if the input and output are valid.
+
+				// We make sure that the user can't change anything after starting a conversion.
+				inputFormats.setEnabled(false);
+				outputFormats.setEnabled(false);
+				inputFile.setEnabled(false);
+				outputDir.setEnabled(false);
+				advanced.setEnabled(false);
+				convertPlayerData.setEnabled(false);
+				convert.setEnabled(false);
+				// This just prevents the user from switching tabs.
+				Main.window.getContentPane().setEnabled(false);
+				// TODO: Start converting
+			} else {
+				String message = inputFile.getText().isEmpty() && outputDir.getText().isEmpty() ? "Input File and Output Directory are both required!" : (inputFile.getText().isEmpty() ? "Input File is required!" : "Output Directory is required!");
+				JOptionPane.showMessageDialog(new JDialog(), message);
+			}
+		});
+		return convert;
 	}
 }
