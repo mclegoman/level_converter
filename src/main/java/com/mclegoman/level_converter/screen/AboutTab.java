@@ -24,7 +24,7 @@ public class AboutTab extends Tab {
 		JLabel title = new JLabel(Main.data.getName());
 		title.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 48));
 		addRow(tab, grid, null, new JLabel(new ImageIcon(Main.getIcon())), Box.createRigidArea(new Dimension(12, 0)), title);
-		addRow(tab, grid, null, new JLabel("Easily convert classic and indev levels"));
+		addRow(tab, grid, null, new JLabel(Main.data.getDescription()));
 		addEmptyRow(tab, grid, 1);
 		addVersioning(tab, grid);
 		addEmptyRow(tab, grid, 2);

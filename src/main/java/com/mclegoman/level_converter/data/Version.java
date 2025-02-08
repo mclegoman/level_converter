@@ -15,15 +15,17 @@ import java.io.InputStream;
 public class Version {
 	private String id;
 	private String name;
+	private String description;
 	private String version;
 	private String author;
 	private Licence licence;
 	private String year;
 	private String source;
 	public Version() {}
-	public Version(String id, String name, String version, String author, Licence licence, String year, String source) {
+	public Version(String id, String name, String description, String version, String author, Licence licence, String year, String source) {
 		this.id = id;
 		this.name = name;
+		this.description = description;
 		this.version = version;
 		this.author = author;
 		this.licence = licence;
@@ -31,19 +33,25 @@ public class Version {
 		this.source = source;
 	}
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public String getVersion() {
-		return version;
+		return this.version;
 	}
 	public void setVersion(String version) {
 		this.version = version;
@@ -55,19 +63,19 @@ public class Version {
 		this.author = author;
 	}
 	public Licence getLicence() {
-		return licence;
+		return this.licence;
 	}
 	public void setLicence(Licence licence) {
 		this.licence = licence;
 	}
 	public String getYear() {
-		return year;
+		return this.year;
 	}
 	public void setYear(String year) {
 		this.year = year;
 	}
 	public String getSource() {
-		return source;
+		return this.source;
 	}
 	public void setSource(String source) {
 		this.source = source;
@@ -81,19 +89,19 @@ public class Version {
 			this.url = url;
 		}
 		public String getId() {
-			return id;
+			return this.id;
 		}
 		public void setId(String id) {
 			this.id = id;
 		}
 		public String getUrl() {
-			return url;
+			return this.url;
 		}
 		public void setUrl(String url) {
 			this.url = url;
 		}
 		public String toString() {
-			return "Licence{id='" + id + "', url='" + url + "'}";
+			return "Licence{id='" + this.id + "', url='" + this.url + "'}";
 		}
 	}
 	public static Version create(String resourceLocation) {
@@ -107,6 +115,6 @@ public class Version {
 		}
 	}
 	public String toString() {
-		return "Version{id='" + id + "', name='" + name + "', version='" + version + "', author='" + author + "', licence=" + licence + ", year='" + year + "', source='" + source + "'}";
+		return "Version{id='" + this.id + "', name='" + this.name + "', description='" + this.description + "', version='" + this.version + "', author='" + this.author + "', licence=" + this.licence + ", year='" + this.year + "', source='" + this.source + "'}";
 	}
 }

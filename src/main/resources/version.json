@@ -1,6 +1,7 @@
 {
 	"id": "level_converter",
 	"name": "Level Converter",
+	"description": "Easily convert classic and indev levels",
 	"version": "${version}",
 	"author": "dannytaylor",
 	"licence": {
