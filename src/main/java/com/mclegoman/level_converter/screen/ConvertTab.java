@@ -106,7 +106,7 @@ public class ConvertTab extends Tab {
 				// TODO: Start converting
 			} else {
 				String message = inputFile.getText().isEmpty() && outputDir.getText().isEmpty() ? "Input File and Output Directory are both required!" : (inputFile.getText().isEmpty() ? "Input File is required!" : "Output Directory is required!");
-				JOptionPane.showMessageDialog(new JDialog(), message);
+				JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), JOptionPane.WARNING_MESSAGE);
 			}
 		});
 		return convert;
