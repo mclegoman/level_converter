@@ -1,17 +1,14 @@
-name: Build
-on: [
-  push,
-  pull_request
-]
+name: build
+on: [pull_request, push]
 
 jobs:
   build:
     strategy:
       matrix:
         java: [
-          8
+          21
         ]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -21,12 +18,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
+          distribution: 'microsoft'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
+        if: ${{ matrix.java == '21' }}
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
