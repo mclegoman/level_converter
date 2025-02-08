@@ -8,11 +8,13 @@
 package com.mclegoman.level_converter.screen;
 
 import com.mclegoman.level_converter.Main;
+import com.mclegoman.level_converter.convert.Convert;
 import com.mclegoman.level_converter.util.Formats;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -24,6 +26,7 @@ public class ConvertTab extends Tab {
 	public JTextField outputDir;
 	public JButton advanced;
 	public JCheckBox convertPlayerData;
+	public JButton convert;
 	public String getName() {
 		return "Convert";
 	}
@@ -37,6 +40,7 @@ public class ConvertTab extends Tab {
 		addRow(tab, grid, "Output Format:", outputFormats = new JComboBox<>());
 		updateInputFormats();
 		updateOutputFormats();
+		inputFormats.addActionListener(e -> updateOutputFormats());
 		JButton selectInput = new JButton("...");
 		addRow(tab, grid, "Input File:", inputFile = new JTextField(), selectInput);
 		selectInput.addActionListener(o -> {
@@ -47,7 +51,6 @@ public class ConvertTab extends Tab {
 		selectOutput.addActionListener(o -> {
 			selectOutputDirectory(() -> "", (s) -> outputDir.setText(s));
 		});
-		inputFormats.addActionListener(e -> updateOutputFormats());
 		advanced = new JButton("Advanced...");
 		advanced.addActionListener(e -> {
 			advanced.setEnabled(false);
@@ -73,37 +76,55 @@ public class ConvertTab extends Tab {
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) onAccept.accept(chooser.getSelectedFile().getAbsolutePath());
 	}
 	private void updateInputFormats() {
-		inputFormats.removeAllItems();
-		inputFormats.addItem(Formats.classic);
-		inputFormats.addItem(Formats.indev);
+		this.inputFormats.removeAllItems();
+		this.inputFormats.addItem(Formats.classic);
+		this.inputFormats.addItem(Formats.indev);
 	}
 	private void updateOutputFormats() {
-		outputFormats.removeAllItems();
-		Formats selectedInputFormat = (Formats) inputFormats.getSelectedItem();
+		this.outputFormats.removeAllItems();
+		Formats selectedInputFormat = (Formats) this.inputFormats.getSelectedItem();
 		if (selectedInputFormat == Formats.classic) {
-			outputFormats.addItem(Formats.indev);
-			outputFormats.addItem(Formats.infdev);
+			this.outputFormats.addItem(Formats.indev);
+			this.outputFormats.addItem(Formats.infdev);
 		} else if (selectedInputFormat == Formats.indev) {
-			outputFormats.addItem(Formats.infdev);
+			this.outputFormats.addItem(Formats.infdev);
 		}
 	}
 	private JButton getConvert() {
-		JButton convert = new JButton("Convert!");
+		convert = new JButton("Convert!");
 		convert.addActionListener(e -> {
-			if (!inputFile.getText().isEmpty() && !outputDir.getText().isEmpty()) {
+			if (!this.inputFile.getText().isEmpty() && !this.outputDir.getText().isEmpty()) {
 				// TODO: Check if the input and output are valid.
-
+				File input = new File(this.inputFile.getText());
+				Path output = new File(this.outputDir.getText()).toPath();
 				// We make sure that the user can't change anything after starting a conversion.
-				inputFormats.setEnabled(false);
-				outputFormats.setEnabled(false);
-				inputFile.setEnabled(false);
-				outputDir.setEnabled(false);
-				advanced.setEnabled(false);
-				convertPlayerData.setEnabled(false);
-				convert.setEnabled(false);
+				this.inputFormats.setEnabled(false);
+				this.outputFormats.setEnabled(false);
+				this.inputFile.setEnabled(false);
+				this.outputDir.setEnabled(false);
+				this.advanced.setEnabled(false);
+				this.convertPlayerData.setEnabled(false);
+				this.convert.setEnabled(false);
 				// This just prevents the user from switching tabs.
 				Main.window.getContentPane().setEnabled(false);
-				// TODO: Start converting
+				Convert.convert(new Convert.Data(
+							(Formats) this.inputFormats.getSelectedItem(),
+							(Formats) this.outputFormats.getSelectedItem(),
+							input,
+							output,
+							this.convertPlayerData.isSelected()
+						),
+						(message) -> {
+							this.inputFormats.setEnabled(true);
+							this.outputFormats.setEnabled(true);
+							this.inputFile.setEnabled(true);
+							this.outputDir.setEnabled(true);
+							this.advanced.setEnabled(true);
+							this.convertPlayerData.setEnabled(true);
+							this.convert.setEnabled(true);
+							Main.window.getContentPane().setEnabled(true);
+							JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), JOptionPane.INFORMATION_MESSAGE);
+				});
 			} else {
 				String message = inputFile.getText().isEmpty() && outputDir.getText().isEmpty() ? "Input File and Output Directory are both required!" : (inputFile.getText().isEmpty() ? "Input File is required!" : "Output Directory is required!");
 				JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), JOptionPane.WARNING_MESSAGE);
