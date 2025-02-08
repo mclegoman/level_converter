@@ -65,6 +65,12 @@ public abstract class Tab {
 		addRow(parent, grid, null, linkLabel("Source Code", Main.data.getSource()));
 		addRow(parent, grid, null, linkLabel("Licence", Main.data.getLicence().getUrl()));
 	}
+	protected static void addTitle(Container parent, GridBagConstraints grid) {
+		JLabel title = new JLabel(Main.data.getName());
+		title.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 48));
+		addRow(parent, grid, null, new JLabel(new ImageIcon(Main.getIcon())), Box.createRigidArea(new Dimension(12, 0)), title);
+		addRow(parent, grid, null, new JLabel(Main.data.getDescription()));
+	}
 	protected static JLabel linkLabel(String text, String url) {
 		JLabel link = new JLabel(text);
 		link.setForeground(Color.getHSBColor(0.53F, 0.62F, 0.78F));
