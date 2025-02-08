@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = project.group
+archivesBaseName = project.name
+version = project.version
+mainClassName = project.main
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.formdev:flatlaf:${project.flatlaf}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 8
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+jar {
+    manifest {
+        attributes["Implementation-Title"] = archivesBaseName
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = project.main
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.register('compileFatJar', Jar) {
+    manifest {
+        attributes["Implementation-Title"] = archivesBaseName
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = project.main
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
