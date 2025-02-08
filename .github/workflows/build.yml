@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         java: [
-          8-jdk
+          8
         ]
     runs-on: ubuntu-24.04
     steps:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'eclipse-temurin'
+          distribution: 'temurin'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
