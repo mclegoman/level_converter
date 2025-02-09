@@ -155,7 +155,7 @@ public class ConvertTab extends Tab {
 				File input = new File(this.inputFile.getText());
 				if (input.exists()) {
 					File output = new File(this.outputDir.getText());
-					if (output.mkdirs()) {
+					if (output.exists() || output.mkdirs()) {
 						// We make sure that the user can't change anything after starting a conversion.
 						this.inputFormats.setEnabled(false);
 						this.outputFormats.setEnabled(false);

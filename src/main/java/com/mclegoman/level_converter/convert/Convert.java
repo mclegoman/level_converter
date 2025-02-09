@@ -20,7 +20,6 @@ import com.mclegoman.level_converter.util.Formats;
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
@@ -36,7 +35,8 @@ public class Convert {
 		else onFinished.run(getInvalidTypeMessage(), JOptionPane.ERROR_MESSAGE);
 	}
 	private static void convertClassicToIndev(Data data, FinishConvert onFinished) {
-		onFinished.run("Successfully converted Classic level to Indev!", JOptionPane.INFORMATION_MESSAGE);
+		onFinished.run("Sorry! Classic to Indev conversion is not available yet!", JOptionPane.WARNING_MESSAGE);
+		//onFinished.run("Successfully converted Classic level to Indev!", JOptionPane.INFORMATION_MESSAGE);
 	}
 	private static void convertToInfdev(Data data, FinishConvert onFinished) {
 		if (data.inType.equals(Formats.classic)) convertClassicToInfdev(data, onFinished);
@@ -172,7 +172,8 @@ public class Convert {
 		return sizeOnDisk;
 	}
 	private static void convertIndevToInfdev(Data data, FinishConvert onFinished) {
-		onFinished.run("Successfully converted Indev level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
+		onFinished.run("Sorry! Indev to Infdev conversion is not available yet!", JOptionPane.WARNING_MESSAGE);
+		//onFinished.run("Successfully converted Indev level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
 	}
 	private static String getInvalidTypeMessage() {
 		return "Input format cannot be converted to Output format.";
