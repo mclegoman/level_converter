@@ -32,9 +32,10 @@ public class ConvertTab extends Tab {
 	public JCheckBox convertPlayerData;
 	public JButton convert;
 	public AdvancedTab advancedTab;
+	public int yOffset = 0;
+	public int offsetBlockId = 0;
 	public boolean replaceBedrock = false;
 	public int replaceBedrockBlockId = 0;
-	public int yOffset = 0;
 	public String getName() {
 		return "Convert";
 	}
@@ -74,9 +75,11 @@ public class ConvertTab extends Tab {
 				this.advancedWindow.setLocationRelativeTo(Main.window);
 				this.advancedWindow.setTitle(Main.window.getTitle() + ": Advanced");
 
+				advancedTab.yOffset.setValue(yOffset);
+				advancedTab.offsetBlockId.setValue(offsetBlockId);
+
 				advancedTab.replaceBedrock.setSelected(replaceBedrock);
 				advancedTab.replaceBedrockBlockId.setValue(replaceBedrockBlockId);
-				advancedTab.yOffset.setValue(yOffset);
 
 				this.advancedWindow.setVisible(true);
 
@@ -94,6 +97,7 @@ public class ConvertTab extends Tab {
 						replaceBedrock = advancedTab.replaceBedrock.isSelected();
 						replaceBedrockBlockId = (int) advancedTab.replaceBedrockBlockId.getValue();
 						yOffset = (int) advancedTab.yOffset.getValue();
+						offsetBlockId = (int) advancedTab.offsetBlockId.getValue();
 
 						advancedWindow = null;
 						inputFormats.setEnabled(true);
@@ -178,7 +182,8 @@ public class ConvertTab extends Tab {
 										this.convertPlayerData.isSelected(),
 										this.replaceBedrock,
 										this.replaceBedrockBlockId,
-										this.yOffset
+										this.yOffset,
+										this.offsetBlockId
 								),
 								(message, messageType) -> {
 									this.inputFormats.setEnabled(true);

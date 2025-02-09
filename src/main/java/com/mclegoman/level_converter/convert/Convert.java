@@ -47,15 +47,15 @@ public class Convert {
 	private static void convertClassicToInfdev(Data config, FinishConvert onFinished) {
 		try {
 			long seed = new Random().nextLong();
-			int spawnX = ConvertConfig.config.spawnX.value();
-			int spawnY = ConvertConfig.config.spawnY.value();
-			int spawnZ = ConvertConfig.config.spawnZ.value();
-			int time = ConvertConfig.config.time.value();
+			int spawnX = ConvertConfig.config.conversionSettings.spawnX.value();
+			int spawnY = ConvertConfig.config.conversionSettings.spawnY.value();
+			int spawnZ = ConvertConfig.config.conversionSettings.spawnZ.value();
+			int time = ConvertConfig.config.conversionSettings.time.value();
 			byte[] blocks = null;
 			ClassField blockMap = null;
-			short height = ConvertConfig.config.height.value().shortValue();
-			short length = ConvertConfig.config.length.value().shortValue();
-			short width = ConvertConfig.config.width.value().shortValue();
+			short height = ConvertConfig.config.conversionSettings.height.value().shortValue();
+			short length = ConvertConfig.config.conversionSettings.length.value().shortValue();
+			short width = ConvertConfig.config.conversionSettings.width.value().shortValue();
 			final NbtCompound[] playerData = new NbtCompound[]{null};
 			for (Field field : Reader.read(config.input).getFields()) {
 				if (field.getFieldName().equals("createTime")) {
@@ -386,7 +386,7 @@ public class Convert {
 		for (int xChunk = 0; xChunk < 16; xChunk++) {
 			for (int zChunk = 0; zChunk < 16; zChunk++) {
 				for (int y = 0; y < yOffset; y++) {
-					chunk[index] = (byte) config.replaceBedrockId; // TODO: Split into separate value.
+					chunk[index] = (byte) config.offsetBlockId;
 					index += 1;
 				}
 				for (int y = 0; y < height; y++) {
@@ -409,7 +409,8 @@ public class Convert {
 		private final boolean replaceBedrock;
 		private final int replaceBedrockId;
 		private final int yOffset;
-		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData, boolean replaceBedrock, int replaceBedrockId, int yOffset) {
+		private final int offsetBlockId;
+		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData, boolean replaceBedrock, int replaceBedrockId, int yOffset, int offsetBlockId) {
 			this.inType = inType;
 			this.outType = outType;
 			this.input = input;
@@ -418,6 +419,7 @@ public class Convert {
 			this.replaceBedrock = replaceBedrock;
 			this.replaceBedrockId = replaceBedrockId;
 			this.yOffset = yOffset;
+			this.offsetBlockId = offsetBlockId;
 		}
 	}
 	public interface FinishConvert {

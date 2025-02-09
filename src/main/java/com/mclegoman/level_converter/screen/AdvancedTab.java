@@ -15,6 +15,7 @@ import java.awt.*;
 public class AdvancedTab extends Tab {
 	public JCheckBox convertEntities;
 	public JSpinner yOffset;
+	public JSpinner offsetBlockId;
 	public JCheckBox replaceBedrock;
 	public JSpinner replaceBedrockBlockId;
 	public String getName() {
@@ -33,7 +34,13 @@ public class AdvancedTab extends Tab {
 		addRow(tab, grid, "Y offset:", yOffset = new JSpinner(new SpinnerNumberModel(
 				new Integer(0),
 				new Integer(0),
-				new Integer(128), // idk how many block id's there are off the top of my head, so this should be enough lol.
+				new Integer(128),
+				new Integer(1)
+		)));
+		addRow(tab, grid, "Offset Block ID:", offsetBlockId = new JSpinner(new SpinnerNumberModel(
+				new Integer(0),
+				new Integer(0),
+				new Integer(1024), // idk how many block id's there are off the top of my head, so this should be enough lol.
 				new Integer(1)
 		)));
 
