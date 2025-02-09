@@ -6,7 +6,13 @@ Easily convert classic and indev levels
 
 ## Attributions  
 - [ClassicExplorer](https://github.com/bluecrab2/ClassicExplorer).  
-    - We include some code from ClassicExplorer with permission from bluecrab2 for our classic converter.  
+    - We include some code from ClassicExplorer with permission from bluecrab2 for our classic converter.
+- [FlatLaf](https://github.com/JFormDesigner/FlatLaf/).
+  - Licensed under [Apache 2.0](https://github.com/JFormDesigner/FlatLaf/blob/main/LICENSE).
+- [jackson-databind](https://github.com/FasterXML/jackson-databind).
+  - Licensed under [Apache 2.0](https://github.com/JFormDesigner/FlatLaf/blob/main/LICENSE).
+- [Quilt Config](https://github.com/QuiltMC/quilt-config).
+  - Licensed under [Apache 2.0](https://github.com/JFormDesigner/FlatLaf/blob/main/LICENSE).
 
 ## Contact  
 If you want to report a bug, you can use the [Issues](https://github.com/mclegoman/mclm_save/issues) page, be sure to specify which version you are using and describe how the bug occurred and what the bug does.  
