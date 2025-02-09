@@ -9,6 +9,7 @@ package com.mclegoman.level_converter.screen;
 
 import com.mclegoman.level_converter.Main;
 import com.mclegoman.level_converter.convert.Convert;
+import com.mclegoman.level_converter.convert.ConvertThread;
 import com.mclegoman.level_converter.util.Formats;
 
 import javax.swing.*;
@@ -166,14 +167,15 @@ public class ConvertTab extends Tab {
 						this.convert.setEnabled(false);
 						// This just prevents the user from switching tabs.
 						Main.window.getContentPane().setEnabled(false);
-						Convert.convert(new Convert.Data(
+						new ConvertThread(new Convert.Data(
 										(Formats) this.inputFormats.getSelectedItem(),
 										(Formats) this.outputFormats.getSelectedItem(),
 										input,
 										output,
 										this.convertPlayerData.isSelected(),
 										this.replaceBedrock,
-										this.replaceBedrockBlockId
+										this.replaceBedrockBlockId,
+										0 // TODO: Add yOffset (note that since we ask for settings before, the input can't be clamped. (should we clamp what it outputs or error)
 								),
 								(message, messageType) -> {
 									this.inputFormats.setEnabled(true);
@@ -185,7 +187,7 @@ public class ConvertTab extends Tab {
 									this.convert.setEnabled(true);
 									Main.window.getContentPane().setEnabled(true);
 									JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), messageType);
-								});
+								}).start();
 					} else {
 						JOptionPane.showMessageDialog(Main.window, "Output Folder could not be created!", Main.data.getName(), JOptionPane.WARNING_MESSAGE);
 					}

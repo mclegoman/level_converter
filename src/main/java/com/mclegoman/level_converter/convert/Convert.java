@@ -26,7 +26,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class Convert {
-	public static void convert(Data data, FinishConvert onFinished) {
+	protected static void convert(Data data, FinishConvert onFinished) {
 		if (data.outType.equals(Formats.indev)) convertToIndev(data, onFinished);
 		else if (data.outType.equals(Formats.infdev)) convertToInfdev(data, onFinished);
 	}
@@ -156,8 +156,8 @@ public class Convert {
 				} else throw new ConvertFailException("Invalid block amount!");
 				int maxYOffset = 128 - height;
 				//if (maxYOffset > 0) minecraft.m_6408915(new SliderConfirmScreen(new ConvertWorldInfoScreen(parent, "Setting y offset...", worldName, input, width, length, height, null, playerData[0], new WorldData(blocks, time, seed, (short) spawnX, (short) spawnY, (short) spawnZ)), "Do you want to offset your world vertically?", "Select how many blocks upwards you want to shift your world", 0, "Y Offset", maxYOffset, "Confirm"));
-				convertBlocksToInfdev(config, config.output, width, height, length, blocks, null, time, 0);
-				createInfdevLevel(config, config.output, seed, spawnX, spawnY + 0, spawnZ, time, calculateSizeOnDisk(config.output, width, length), playerData[0]);
+				convertBlocksToInfdev(config, config.output, width, height, length, blocks, null, time, config.yOffset);
+				createInfdevLevel(config, config.output, seed, spawnX, spawnY + config.yOffset, spawnZ, time, calculateSizeOnDisk(config.output, width, length), playerData[0]);
 				//convertClassicFinish(minecraft, parent, worldName, width, height, length, blocks, playerData[0], time, seed, (short) spawnX, (short) spawnY, (short) spawnZ, 0);
 				onFinished.run("Successfully converted Classic level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -172,8 +172,56 @@ public class Convert {
 		return sizeOnDisk;
 	}
 	private static void convertIndevToInfdev(Data data, FinishConvert onFinished) {
-		onFinished.run("Sorry! Indev to Infdev conversion is not available yet!", JOptionPane.WARNING_MESSAGE);
-		//onFinished.run("Successfully converted Indev level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
+		try {
+			NbtCompound nbtCompound = load(Files.newInputStream(data.input.toPath()));
+			NbtCompound map = nbtCompound.getCompound("Map");
+			NbtCompound player = null;
+			if (data.convertPlayerData) {
+				for (int i = 0; i < nbtCompound.getList("Entities").size(); i++) {
+					NbtCompound entity = (NbtCompound) nbtCompound.getList("Entities").get(i);
+					if (entity.containsKey("id") && entity.getString("id").equals("LocalPlayer")) {
+						player = entity;
+						break;
+					}
+				}
+				// The only difference between indev player data and infdev player data is
+				// that infdev uses double instead of float for motion and pos.
+				if (player != null) {
+					NbtList motion = player.getList("Motion");
+					NbtList newMotion = new NbtList();
+					for (int i = 0; i < motion.size(); i++) newMotion.add(new NbtDouble(((NbtFloat)motion.get(i)).value));
+					player.put("Motion", newMotion);
+					NbtList pos = player.getList("Pos");
+					NbtList newPos = new NbtList();
+					for (int i = 0; i < pos.size(); i++) newPos.add(new NbtDouble(((NbtFloat)pos.get(i)).value));
+					player.put("Pos", newPos);
+				}
+			}
+			short width = map.getShort("Width");
+			short length = map.getShort("Length");
+			short height = map.getShort("Height");
+			int maxYOffset = 128 - height;
+			if (data.yOffset > maxYOffset) throw new ConvertFailException("yOffset is higher than the maximum for this level! (" + data.yOffset + ">" + maxYOffset + ")");
+			NbtCompound mapOut = nbtCompound.getCompound("Map");
+			long seed = nbtCompound.getCompound("About").getLong("CreatedOn");
+			short spawnX = ((NbtShort) mapOut.getList("Spawn").get(0)).value;
+			short spawnY = ((NbtShort) mapOut.getList("Spawn").get(1)).value;
+			short spawnZ = ((NbtShort) mapOut.getList("Spawn").get(2)).value;
+			long time = nbtCompound.getCompound("Map").getShort("TimeOfDay");
+			convertBlocksToInfdev(data, data.output, width, height, length, mapOut.getByteArray("Blocks"), mapOut.containsKey("Data") ? mapOut.getByteArray("Data") : null, time, data.yOffset);
+			// If we were to convert entities, they would be converted here.
+			// Note: we don't convert currently, as the next version of infdev, doesn't save/load entities.
+			convertTileEntitiesToInfdev(data.output, nbtCompound.getList("TileEntities"), data.yOffset);
+			if (player != null) {
+				NbtList pos = player.getList("Pos");
+				pos.replace(1, new NbtDouble((((NbtDouble)pos.get(1)).value) + data.yOffset));
+				player.put("Pos", pos);
+			}
+			createInfdevLevel(data, data.output, seed, spawnX, spawnY + data.yOffset, spawnZ, time, calculateSizeOnDisk(data.output, width, length), player);
+			onFinished.run("Successfully converted Indev level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
+		} catch (Exception error) {
+			onFinished.run("Failed to convert Indev level to Infdev: " + error.getLocalizedMessage(), JOptionPane.WARNING_MESSAGE);
+		}
 	}
 	private static String getInvalidTypeMessage() {
 		return "Input format cannot be converted to Output format.";
@@ -187,6 +235,38 @@ public class Convert {
 		NbtList nbtList = new NbtList();
 		for (double value : ds) nbtList.add(new NbtDouble(value));
 		return nbtList;
+	}
+	private static void convertTileEntitiesToInfdev(File dir, NbtList tileEntities, int yOffset) throws IOException {
+		for (int i = 0; i < tileEntities.size(); i++) {
+			NbtElement tileEntity = tileEntities.get(i);
+			if (tileEntity.getType() == 10) {
+				NbtCompound tile = (NbtCompound)tileEntity;
+				if (tile.containsKey("Pos")) {
+					int pos = tile.getInt("Pos");
+					// https://minecraft.wiki/w/Java_Edition_Indev_level_format
+					int x = pos % 1024;
+					int y = ((pos >> 10) % 1024) + yOffset;
+					int z = (pos >> 20) % 1024;
+					tile.remove("Pos");
+					tile.putInt("x", x);
+					tile.putInt("y", y);
+					tile.putInt("z", z);
+					int chunkX = x / 16;
+					int chunkZ = z / 16;
+					if (x >= chunkX * 16 && x < (chunkX + 1) * 16 && z >= chunkZ * 16 && z < (chunkZ + 1) * 16) {
+						if (tile.getString("id").equals("Chest")) {
+							File file = getChunkFile(dir, chunkX, chunkZ);
+							NbtCompound chunk = load(Files.newInputStream(file.toPath())).getCompound("Level");
+							NbtList chunkTileEntities = chunk.getList("TileEntities");
+							chunkTileEntities.add(tile);
+							NbtCompound level = new NbtCompound();
+							level.put("Level", chunk);
+							save(level, Files.newOutputStream(file.toPath()));
+						}
+					}
+				}
+			}
+		}
 	}
 	private static void convertBlocksToInfdev(Data config, final File dir, final short width, final short height, final short length, final byte[] blocks, final byte[] blocksData, final long ticks, final int yOffset) throws ConvertFailException, IOException {
 		// inf-20100227 changed the world height from 256, to 127.
@@ -328,7 +408,8 @@ public class Convert {
 		private final boolean convertPlayerData;
 		private final boolean replaceBedrock;
 		private final int replaceBedrockId;
-		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData, boolean replaceBedrock, int replaceBedrockId) {
+		private final int yOffset;
+		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData, boolean replaceBedrock, int replaceBedrockId, int yOffset) {
 			this.inType = inType;
 			this.outType = outType;
 			this.input = input;
@@ -336,6 +417,7 @@ public class Convert {
 			this.convertPlayerData = convertPlayerData;
 			this.replaceBedrock = replaceBedrock;
 			this.replaceBedrockId = replaceBedrockId;
+			this.yOffset = yOffset;
 		}
 	}
 	public interface FinishConvert {
