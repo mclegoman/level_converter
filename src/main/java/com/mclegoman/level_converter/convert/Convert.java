@@ -7,6 +7,7 @@
 
 package com.mclegoman.level_converter.convert;
 
+import com.mclegoman.level_converter.Main;
 import com.mclegoman.level_converter.classicexplorer.fields.ArrayField;
 import com.mclegoman.level_converter.classicexplorer.fields.BlocksField;
 import com.mclegoman.level_converter.classicexplorer.fields.ClassField;
@@ -155,10 +156,8 @@ public class Convert {
 				} else throw new ConvertFailException("Invalid block amount!");
 				int maxYOffset = 128 - height;
 				//if (maxYOffset > 0) minecraft.m_6408915(new SliderConfirmScreen(new ConvertWorldInfoScreen(parent, "Setting y offset...", worldName, input, width, length, height, null, playerData[0], new WorldData(blocks, time, seed, (short) spawnX, (short) spawnY, (short) spawnZ)), "Do you want to offset your world vertically?", "Select how many blocks upwards you want to shift your world", 0, "Y Offset", maxYOffset, "Confirm"));
-
-				File output = new File(config.output.toFile(), config.input.getName());
-				convertBlocksToInfdev(config, output, width, height, length, blocks, null, time, 0);
-				createInfdevLevel(config, output, seed, spawnX, spawnY + 0, spawnZ, time, calculateSizeOnDisk(output, width, length), playerData[0]);
+				convertBlocksToInfdev(config, config.output, width, height, length, blocks, null, time, 0);
+				createInfdevLevel(config, config.output, seed, spawnX, spawnY + 0, spawnZ, time, calculateSizeOnDisk(config.output, width, length), playerData[0]);
 				//convertClassicFinish(minecraft, parent, worldName, width, height, length, blocks, playerData[0], time, seed, (short) spawnX, (short) spawnY, (short) spawnZ, 0);
 				onFinished.run("Successfully converted Classic level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -194,7 +193,10 @@ public class Convert {
 		if (width % 16 != 0) throw new ConvertFailException("Width was " + width + ", expecting value divisible by 16!");
 		if (height <= 0 || height > 127) throw new ConvertFailException("Height was " + height + ", expecting value between 1 and 127!");
 		if (length % 16 != 0) throw new ConvertFailException("Length was " + length + ", expecting value divisible by 16!");
-		if (blocksData == null) System.out.println("No block data present: Block light and metadata will be set to default, you may encounter lag when these update for the first time.");
+		if (blocksData == null) {
+			String noBlocksData = "No block data present: Block light and metadata will be set to default, you may encounter lag when these update for the first time.";
+			JOptionPane.showMessageDialog(Main.window, noBlocksData, Main.data.getName(), JOptionPane.WARNING_MESSAGE);
+		}
 		if (blocks.length == width * height * length) {
 			int total = ((width / 16) * (length / 16));
 			for (int chunk = 0; chunk < total; chunk++) {
@@ -321,13 +323,13 @@ public class Convert {
 		private final Formats inType;
 		private final Formats outType;
 		private final File input;
-		private final Path output;
+		private final File output;
 		private final boolean convertPlayerData;
-		public Data(Formats inType, Formats outType, File input, Path output, boolean convertPlayerData) {
+		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData) {
 			this.inType = inType;
 			this.outType = outType;
 			this.input = input;
-			this.output = output;
+			this.output = new File(output, input.getName().substring(0, input.getName().lastIndexOf(".")));
 			this.convertPlayerData = convertPlayerData;
 		}
 	}
