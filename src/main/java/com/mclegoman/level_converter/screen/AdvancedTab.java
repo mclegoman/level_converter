@@ -13,9 +13,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class AdvancedTab extends Tab {
+	public JCheckBox convertEntities;
+	public JSpinner yOffset;
 	public JCheckBox replaceBedrock;
 	public JSpinner replaceBedrockBlockId;
-	public JSpinner yOffset;
 	public String getName() {
 		return "Advanced Settings";
 	}
@@ -23,17 +24,24 @@ public class AdvancedTab extends Tab {
 		GridBagConstraints grid = new GridBagConstraints();
 		grid.insets = new Insets(0, 0, 0, 0);
 		grid.gridx = grid.gridy = 0;
+
+		// Converting entities isn't currently supported.
+		convertEntities = new JCheckBox();
+		convertEntities.setEnabled(false);
+		addRow(tab, grid, "Convert Entities:", convertEntities, new JLabel("(Entity conversion is not yet available)"));
+
+		addRow(tab, grid, "Y offset:", yOffset = new JSpinner(new SpinnerNumberModel(
+				new Integer(0),
+				new Integer(0),
+				new Integer(128), // idk how many block id's there are off the top of my head, so this should be enough lol.
+				new Integer(1)
+		)));
+
 		addRow(tab, grid, "Replace Bedrock:", replaceBedrock = new JCheckBox());
 		addRow(tab, grid, "Replace Bedrock with Block ID:", replaceBedrockBlockId = new JSpinner(new SpinnerNumberModel(
 				new Integer(0),
 				new Integer(0),
 				new Integer(1024), // idk how many block id's there are off the top of my head, so this should be enough lol.
-				new Integer(1)
-		)));
-		addRow(tab, grid, "Y offset:", yOffset = new JSpinner(new SpinnerNumberModel(
-				new Integer(0),
-				new Integer(0),
-				new Integer(128), // idk how many block id's there are off the top of my head, so this should be enough lol.
 				new Integer(1)
 		)));
 	}

@@ -13,6 +13,7 @@ import com.mclegoman.level_converter.classicexplorer.fields.BlocksField;
 import com.mclegoman.level_converter.classicexplorer.fields.ClassField;
 import com.mclegoman.level_converter.classicexplorer.fields.Field;
 import com.mclegoman.level_converter.classicexplorer.io.Reader;
+import com.mclegoman.level_converter.config.ConvertConfig;
 import com.mclegoman.level_converter.exception.ConvertFailException;
 import com.mclegoman.level_converter.nbt.*;
 import com.mclegoman.level_converter.util.Formats;
@@ -46,15 +47,15 @@ public class Convert {
 	private static void convertClassicToInfdev(Data config, FinishConvert onFinished) {
 		try {
 			long seed = new Random().nextLong();
-			int spawnX = 128;//SaveConfig.instance.conversionSettings.spawnX.value();
-			int spawnY = 36;//SaveConfig.instance.conversionSettings.spawnY.value();
-			int spawnZ = 128;//SaveConfig.instance.conversionSettings.spawnZ.value();
-			int time = 0;//SaveConfig.instance.conversionSettings.time.value();
+			int spawnX = ConvertConfig.config.spawnX.value();
+			int spawnY = ConvertConfig.config.spawnY.value();
+			int spawnZ = ConvertConfig.config.spawnZ.value();
+			int time = ConvertConfig.config.time.value();
 			byte[] blocks = null;
 			ClassField blockMap = null;
-			short height = 64;//SaveConfig.instance.conversionSettings.height.value().shortValue();
-			short length = 256;//SaveConfig.instance.conversionSettings.length.value().shortValue();
-			short width = 256;//SaveConfig.instance.conversionSettings.width.value().shortValue();
+			short height = ConvertConfig.config.height.value().shortValue();
+			short length = ConvertConfig.config.length.value().shortValue();
+			short width = ConvertConfig.config.width.value().shortValue();
 			final NbtCompound[] playerData = new NbtCompound[]{null};
 			for (Field field : Reader.read(config.input).getFields()) {
 				if (field.getFieldName().equals("createTime")) {
@@ -385,7 +386,7 @@ public class Convert {
 		for (int xChunk = 0; xChunk < 16; xChunk++) {
 			for (int zChunk = 0; zChunk < 16; zChunk++) {
 				for (int y = 0; y < yOffset; y++) {
-					chunk[index] = 0;//SaveConfig.instance.conversionSettings.offsetBlockId.value().byteValue();
+					chunk[index] = (byte) config.replaceBedrockId; // TODO: Split into separate value.
 					index += 1;
 				}
 				for (int y = 0; y < height; y++) {

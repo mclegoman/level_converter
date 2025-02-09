@@ -43,7 +43,7 @@ public class ConvertTab extends Tab {
 		grid.insets = new Insets(1, 1, 1, 1);
 		grid.gridx = grid.gridy = 0;
 		addTitle(tab, grid);
-		addEmptyRow(tab, grid, 1);
+		addEmptyLabelRow(tab, grid, 1);
 		addRow(tab, grid, "Input Format:", inputFormats = new JComboBox<>());
 		addRow(tab, grid, "Output Format:", outputFormats = new JComboBox<>());
 		updateInputFormats();
@@ -67,7 +67,7 @@ public class ConvertTab extends Tab {
 				advancedTab = new AdvancedTab();
 				advancedWindowContent.addTab(advancedTab.getName(), advancedTab.create());
 				this.advancedWindow.setContentPane(advancedWindowContent);
-				this.advancedWindow.setPreferredSize(new Dimension(300, 400));
+				this.advancedWindow.setPreferredSize(new Dimension(500, 400));
 				this.advancedWindow.setMinimumSize(this.advancedWindow.getPreferredSize());
 				this.advancedWindow.setSize(this.advancedWindow.getPreferredSize());
 				this.advancedWindow.pack();

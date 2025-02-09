@@ -61,7 +61,7 @@ public abstract class Tab {
 	protected static Component addSpacer() {
 		return addSpacer(8, 0);
 	}
-	protected static void addEmptyRow(JPanel tab, GridBagConstraints grid, int amount) {
+	protected static void addEmptyLabelRow(JPanel tab, GridBagConstraints grid, int amount) {
 		for (int i = 0; i < amount; i++) addRow(tab, grid, null, new JLabel(" "));
 	}
 	protected static void addVersioning(Container parent, GridBagConstraints grid) {

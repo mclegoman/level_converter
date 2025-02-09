@@ -11,11 +11,14 @@ mainClassName = project.main
 
 repositories {
     mavenCentral()
+    maven { url = "https://maven.quiltmc.org/repository/release/" }
 }
 
 dependencies {
     implementation "com.formdev:flatlaf:${project.flatlaf}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${project.jackson}"
+    implementation("org.quiltmc:quilt-config:${project.quilt_config}")
+    implementation("org.quiltmc.quilt-config.serializers:toml:${project.quilt_config}")
 }
 
 java {

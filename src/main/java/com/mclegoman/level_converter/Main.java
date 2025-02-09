@@ -7,6 +7,7 @@
 
 package com.mclegoman.level_converter;
 
+import com.mclegoman.level_converter.config.ConvertConfig;
 import com.mclegoman.level_converter.data.Version;
 import com.mclegoman.level_converter.screen.Window;
 
@@ -16,6 +17,7 @@ public class Main {
 	public static Version data;
 	public static Window window;
 	public static void main(String[] args) {
+		ConvertConfig.init();
 		window = Window.create();
 	}
 	public static Image getIcon() {
