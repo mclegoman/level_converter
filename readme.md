@@ -2,8 +2,7 @@
 Easily convert classic and indev levels  
 
 ## Dependencies  
-- [Java 8 or later](https://adoptium.net/temurin/releases/?version=8). (Built using Eclipse Temurin 8.0.412+8)  
-
+- [Java 8 or later](https://adoptium.net/temurin/releases/?version=8). (Built using Eclipse Temurin 1.8.0_432)  
 ## Attributions  
 - [ClassicExplorer](https://github.com/bluecrab2/ClassicExplorer).  
     - We include some code from ClassicExplorer with permission from bluecrab2 for our classic converter.
