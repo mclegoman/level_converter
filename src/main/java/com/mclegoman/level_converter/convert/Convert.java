@@ -310,7 +310,7 @@ public class Convert {
 				}
 				for (int y = 0; y < height; y++) {
 					byte block = blocks[(((y * length + (z * 16 + zChunk)) * width) + (x * 16 + xChunk))];
-					if (/*SaveConfig.instance.conversionSettings.replaceBedrock.value() &&*/ block == (byte) 7) block = 0;//SaveConfig.instance.conversionSettings.offsetBlockId.value().byteValue();
+					if (config.replaceBedrock && block == (byte) 7) block = (byte) config.replaceBedrockId;
 					chunk[index] = block;
 					index++;
 				}
@@ -325,12 +325,16 @@ public class Convert {
 		private final File input;
 		private final File output;
 		private final boolean convertPlayerData;
-		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData) {
+		private final boolean replaceBedrock;
+		private final int replaceBedrockId;
+		public Data(Formats inType, Formats outType, File input, File output, boolean convertPlayerData, boolean replaceBedrock, int replaceBedrockId) {
 			this.inType = inType;
 			this.outType = outType;
 			this.input = input;
 			this.output = new File(output, input.getName().substring(0, input.getName().lastIndexOf(".")));
 			this.convertPlayerData = convertPlayerData;
+			this.replaceBedrock = replaceBedrock;
+			this.replaceBedrockId = replaceBedrockId;
 		}
 	}
 	public interface FinishConvert {

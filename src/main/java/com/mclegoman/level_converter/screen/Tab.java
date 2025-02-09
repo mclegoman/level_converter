@@ -10,6 +10,7 @@ package com.mclegoman.level_converter.screen;
 import com.mclegoman.level_converter.Main;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -21,9 +22,12 @@ public abstract class Tab {
 	public abstract void init(JPanel tab);
 	public JPanel create() {
 		JPanel tab = new JPanel(new GridBagLayout());
-		tab.setBorder(new EmptyBorder(48, 48, 48, 48));
+		tab.setBorder(getBorder());
 		init(tab);
 		return tab;
+	}
+	public Border getBorder() {
+		return new EmptyBorder(48, 48, 48, 48);
 	}
 	protected static void addRow(Container parent, GridBagConstraints grid, String label, Component... components) {
 		if (label != null) {

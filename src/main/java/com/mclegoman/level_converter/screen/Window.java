@@ -45,6 +45,7 @@ public class Window extends JFrame {
 			UIManager.setLookAndFeel(new FlatDarculaLaf());
 		} catch (Exception error) {
 			System.out.println(error.getLocalizedMessage());
+			JOptionPane.showMessageDialog(Main.window, "Failed to set theme, using fallback!", Main.data.getName(), JOptionPane.WARNING_MESSAGE);
 		}
 	}
 }
