@@ -12,6 +12,7 @@ import com.mclegoman.level_converter.convert.Convert;
 import com.mclegoman.level_converter.util.Formats;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -49,7 +50,7 @@ public class ConvertTab extends Tab {
 		JButton selectInput = new JButton("...");
 		addRow(tab, grid, "Input File:", inputFile = new JTextField(), selectInput);
 		selectInput.addActionListener(o -> {
-			selectInputFile(() -> inputFile.getText(), (s) -> inputFile.setText(s));
+			selectInputFile((Formats) this.inputFormats.getSelectedItem(), () -> inputFile.getText(), (s) -> inputFile.setText(s));
 		});
 		JButton selectOutput = new JButton("...");
 		addRow(tab, grid, "Output Location:", outputDir = new JTextField(Paths.get("").toAbsolutePath().toString()), selectOutput);
@@ -107,13 +108,20 @@ public class ConvertTab extends Tab {
 		addRow(tab, grid, null, new JLabel("Convert Player Data:"), convertPlayerData = new JCheckBox((Icon)null, true));
 		addRow(tab, grid, null, getConvert());
 	}
-	public static void selectInputFile(Supplier<String> dir, Consumer<String> onAccept) {
+	public static void selectInputFile(Formats input, Supplier<String> dir, Consumer<String> onAccept) {
 		String iDir = !dir.get().isEmpty() ? dir.get() : Paths.get("").toAbsolutePath().toString();
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File(iDir));
 		chooser.setDialogTitle(Main.data.getName() + ": Select level file to convert");
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[3];
+		filters[0] = new FileNameExtensionFilter("Minecraft level (.mclevel, .mine, .dat)", "mclevel", "mine", "dat");
+		filters[1] = new FileNameExtensionFilter("Indev Minecraft level (.mclevel)", "mclevel");
+		filters[2] = new FileNameExtensionFilter("Classic Minecraft level (.mine, .dat)", "mine", "dat");
+		for (FileNameExtensionFilter filter : filters) chooser.addChoosableFileFilter(filter);
+		if (input.equals(Formats.classic)) chooser.setFileFilter(filters[2]);
+		else if (input.equals(Formats.indev)) chooser.setFileFilter(filters[1]);
+		else chooser.setFileFilter(filters[0]);
 		if (chooser.showOpenDialog(Main.window) == JFileChooser.APPROVE_OPTION) onAccept.accept(chooser.getSelectedFile().getAbsolutePath());
 	}
 	public static void selectOutputDirectory(Supplier<String> dir, Consumer<String> onAccept) {
@@ -122,7 +130,6 @@ public class ConvertTab extends Tab {
 		chooser.setCurrentDirectory(new File(oDir));
 		chooser.setDialogTitle(Main.data.getName() + ": Select directory for converted level");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
 		if (chooser.showOpenDialog(Main.window) == JFileChooser.APPROVE_OPTION) onAccept.accept(chooser.getSelectedFile().getAbsolutePath());
 	}
 	private void updateInputFormats() {
@@ -145,39 +152,46 @@ public class ConvertTab extends Tab {
 		convert.addActionListener(e -> {
 			if (advancedWindow != null) advancedWindow.dispatchEvent(new WindowEvent(advancedWindow, WindowEvent.WINDOW_CLOSING));
 			if (!this.inputFile.getText().isEmpty() && !this.outputDir.getText().isEmpty()) {
-				// TODO: Check if the input and output are valid.
 				File input = new File(this.inputFile.getText());
-				File output = new File(this.outputDir.getText());
-				// We make sure that the user can't change anything after starting a conversion.
-				this.inputFormats.setEnabled(false);
-				this.outputFormats.setEnabled(false);
-				this.inputFile.setEnabled(false);
-				this.outputDir.setEnabled(false);
-				this.advanced.setEnabled(false);
-				this.convertPlayerData.setEnabled(false);
-				this.convert.setEnabled(false);
-				// This just prevents the user from switching tabs.
-				Main.window.getContentPane().setEnabled(false);
-				Convert.convert(new Convert.Data(
-							(Formats) this.inputFormats.getSelectedItem(),
-							(Formats) this.outputFormats.getSelectedItem(),
-							input,
-							output,
-							this.convertPlayerData.isSelected(),
-							this.replaceBedrock,
-							this.replaceBedrockBlockId
-						),
-						(message, messageType) -> {
-							this.inputFormats.setEnabled(true);
-							this.outputFormats.setEnabled(true);
-							this.inputFile.setEnabled(true);
-							this.outputDir.setEnabled(true);
-							this.advanced.setEnabled(true);
-							this.convertPlayerData.setEnabled(true);
-							this.convert.setEnabled(true);
-							Main.window.getContentPane().setEnabled(true);
-							JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), messageType);
-				});
+				if (input.exists()) {
+					File output = new File(this.outputDir.getText());
+					if (output.mkdirs()) {
+						// We make sure that the user can't change anything after starting a conversion.
+						this.inputFormats.setEnabled(false);
+						this.outputFormats.setEnabled(false);
+						this.inputFile.setEnabled(false);
+						this.outputDir.setEnabled(false);
+						this.advanced.setEnabled(false);
+						this.convertPlayerData.setEnabled(false);
+						this.convert.setEnabled(false);
+						// This just prevents the user from switching tabs.
+						Main.window.getContentPane().setEnabled(false);
+						Convert.convert(new Convert.Data(
+										(Formats) this.inputFormats.getSelectedItem(),
+										(Formats) this.outputFormats.getSelectedItem(),
+										input,
+										output,
+										this.convertPlayerData.isSelected(),
+										this.replaceBedrock,
+										this.replaceBedrockBlockId
+								),
+								(message, messageType) -> {
+									this.inputFormats.setEnabled(true);
+									this.outputFormats.setEnabled(true);
+									this.inputFile.setEnabled(true);
+									this.outputDir.setEnabled(true);
+									this.advanced.setEnabled(true);
+									this.convertPlayerData.setEnabled(true);
+									this.convert.setEnabled(true);
+									Main.window.getContentPane().setEnabled(true);
+									JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), messageType);
+								});
+					} else {
+						JOptionPane.showMessageDialog(Main.window, "Output Folder could not be created!", Main.data.getName(), JOptionPane.WARNING_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(Main.window, "Input File could not be found!", Main.data.getName(), JOptionPane.WARNING_MESSAGE);
+				}
 			} else {
 				String message = inputFile.getText().isEmpty() && outputDir.getText().isEmpty() ? "Input File and Output Directory are both required!" : (inputFile.getText().isEmpty() ? "Input File is required!" : "Output Directory is required!");
 				JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), JOptionPane.WARNING_MESSAGE);
