@@ -114,7 +114,7 @@ public class ConvertTab extends Tab {
 							output,
 							this.convertPlayerData.isSelected()
 						),
-						(message) -> {
+						(message, messageType) -> {
 							this.inputFormats.setEnabled(true);
 							this.outputFormats.setEnabled(true);
 							this.inputFile.setEnabled(true);
@@ -123,7 +123,7 @@ public class ConvertTab extends Tab {
 							this.convertPlayerData.setEnabled(true);
 							this.convert.setEnabled(true);
 							Main.window.getContentPane().setEnabled(true);
-							JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(Main.window, message, Main.data.getName(), messageType);
 				});
 			} else {
 				String message = inputFile.getText().isEmpty() && outputDir.getText().isEmpty() ? "Input File and Output Directory are both required!" : (inputFile.getText().isEmpty() ? "Input File is required!" : "Output Directory is required!");
