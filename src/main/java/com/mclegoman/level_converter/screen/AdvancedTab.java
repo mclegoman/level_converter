@@ -15,6 +15,7 @@ import java.awt.*;
 public class AdvancedTab extends Tab {
 	public JCheckBox replaceBedrock;
 	public JSpinner replaceBedrockBlockId;
+	public JSpinner yOffset;
 	public String getName() {
 		return "Advanced Settings";
 	}
@@ -27,6 +28,12 @@ public class AdvancedTab extends Tab {
 				new Integer(0),
 				new Integer(0),
 				new Integer(1024), // idk how many block id's there are off the top of my head, so this should be enough lol.
+				new Integer(1)
+		)));
+		addRow(tab, grid, "Y offset:", yOffset = new JSpinner(new SpinnerNumberModel(
+				new Integer(0),
+				new Integer(0),
+				new Integer(128), // idk how many block id's there are off the top of my head, so this should be enough lol.
 				new Integer(1)
 		)));
 	}

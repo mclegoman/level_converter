@@ -34,6 +34,7 @@ public class ConvertTab extends Tab {
 	public AdvancedTab advancedTab;
 	public boolean replaceBedrock = false;
 	public int replaceBedrockBlockId = 0;
+	public int yOffset = 0;
 	public String getName() {
 		return "Convert";
 	}
@@ -75,6 +76,7 @@ public class ConvertTab extends Tab {
 
 				advancedTab.replaceBedrock.setSelected(replaceBedrock);
 				advancedTab.replaceBedrockBlockId.setValue(replaceBedrockBlockId);
+				advancedTab.yOffset.setValue(yOffset);
 
 				this.advancedWindow.setVisible(true);
 
@@ -91,6 +93,7 @@ public class ConvertTab extends Tab {
 					public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 						replaceBedrock = advancedTab.replaceBedrock.isSelected();
 						replaceBedrockBlockId = (int) advancedTab.replaceBedrockBlockId.getValue();
+						yOffset = (int) advancedTab.yOffset.getValue();
 
 						advancedWindow = null;
 						inputFormats.setEnabled(true);
@@ -175,7 +178,7 @@ public class ConvertTab extends Tab {
 										this.convertPlayerData.isSelected(),
 										this.replaceBedrock,
 										this.replaceBedrockBlockId,
-										0 // TODO: Add yOffset (note that since we ask for settings before, the input can't be clamped. (should we clamp what it outputs or error)
+										this.yOffset
 								),
 								(message, messageType) -> {
 									this.inputFormats.setEnabled(true);

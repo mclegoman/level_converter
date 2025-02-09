@@ -155,14 +155,13 @@ public class Convert {
 					}
 				} else throw new ConvertFailException("Invalid block amount!");
 				int maxYOffset = 128 - height;
-				//if (maxYOffset > 0) minecraft.m_6408915(new SliderConfirmScreen(new ConvertWorldInfoScreen(parent, "Setting y offset...", worldName, input, width, length, height, null, playerData[0], new WorldData(blocks, time, seed, (short) spawnX, (short) spawnY, (short) spawnZ)), "Do you want to offset your world vertically?", "Select how many blocks upwards you want to shift your world", 0, "Y Offset", maxYOffset, "Confirm"));
+				if (config.yOffset > maxYOffset) throw new ConvertFailException("yOffset is higher than the maximum for this level! (" + config.yOffset + ">" + maxYOffset + ")");
 				convertBlocksToInfdev(config, config.output, width, height, length, blocks, null, time, config.yOffset);
 				createInfdevLevel(config, config.output, seed, spawnX, spawnY + config.yOffset, spawnZ, time, calculateSizeOnDisk(config.output, width, length), playerData[0]);
-				//convertClassicFinish(minecraft, parent, worldName, width, height, length, blocks, playerData[0], time, seed, (short) spawnX, (short) spawnY, (short) spawnZ, 0);
 				onFinished.run("Successfully converted Classic level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (Exception error) {
-			onFinished.run("Failed to convert Classic level to Infdev: " + error.getLocalizedMessage(), JOptionPane.WARNING_MESSAGE);
+			onFinished.run(error.getLocalizedMessage(), JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	private static long calculateSizeOnDisk(final File dir, final short width, final short length) {
@@ -220,7 +219,7 @@ public class Convert {
 			createInfdevLevel(data, data.output, seed, spawnX, spawnY + data.yOffset, spawnZ, time, calculateSizeOnDisk(data.output, width, length), player);
 			onFinished.run("Successfully converted Indev level to Infdev!", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception error) {
-			onFinished.run("Failed to convert Indev level to Infdev: " + error.getLocalizedMessage(), JOptionPane.WARNING_MESSAGE);
+			onFinished.run(error.getLocalizedMessage(), JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	private static String getInvalidTypeMessage() {
